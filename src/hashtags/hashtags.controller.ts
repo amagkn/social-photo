@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Hashtag } from 'src/hashtags/hashtag.entity';
 import { Repository } from 'typeorm';
@@ -9,7 +9,14 @@ export class HashtagsController {
     @InjectRepository(Hashtag) private hashtagsRepository: Repository<Hashtag>,
   ) {}
   @Get()
-  getAll() {
-    return this.hashtagsRepository.find();
+  async findAll(
+    @Query('offset') offset: string,
+    @Query('limit') limit: string,
+  ) {
+    return this.hashtagsRepository
+      .createQueryBuilder('hashtags')
+      .offset(offset ? Number(offset) : 0)
+      .limit(limit ? Number(limit) : 100)
+      .getMany();
   }
 }

@@ -1,16 +1,23 @@
-import { Controller, Get } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Controller, Get, Query } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindAllUsersDto } from 'src/users/dtos/find-all-users.dto';
+import { User } from 'src/users/user.entity';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 
 @Controller('users')
 export class UsersController {
-  constructor(private configSerivice: ConfigService) {}
-  @Get()
-  getAllUsers() {
-    console.log(
-      this.configSerivice.get('DATABASE_USER'),
-      this.configSerivice.get('DATABASE_PASSWORD'),
-    );
+  usersQueryBuilder: SelectQueryBuilder<User>;
 
-    return 'Hello world';
+  constructor(@InjectRepository(User) usersRepository: Repository<User>) {
+    this.usersQueryBuilder = usersRepository.createQueryBuilder('users');
+  }
+  @Get()
+  async findAll(@Query() query: FindAllUsersDto) {
+    const qb = this.usersQueryBuilder.offset(query.offset).limit(query.limit);
+
+    const data = await qb.getMany();
+    const total = await qb.getCount();
+
+    return { data, total };
   }
 }

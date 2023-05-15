@@ -1,14 +1,16 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Hashtag } from 'src/hashtags/hashtag.entity';
+import { User } from 'src/users/user.entity';
 
 import { HashtagsModule } from './hashtags/hashtags.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -18,7 +20,7 @@ import { UsersModule } from './users/users.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [Hashtag],
+        entities: [User, Hashtag],
       }),
       inject: [ConfigService],
     }),
@@ -26,6 +28,11 @@ import { UsersModule } from './users/users.module';
     HashtagsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({ whitelist: true }),
+    },
+  ],
 })
 export class AppModule {}
