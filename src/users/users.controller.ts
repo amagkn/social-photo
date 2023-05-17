@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { serializeToDto } from 'src/common/helpers/serialize-to-dto.helper';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { FindAllUsersDto } from 'src/users/dtos/find-all-users.dto';
@@ -12,11 +22,10 @@ export class UsersController {
   @Get()
   async findAllUsers(
     @Query() query: FindAllUsersDto,
-  ): Promise<{ data: User[]; total: number }> {
-    const result = await this.usersService.findAllUsers(
-      query.offset,
-      query.limit,
-    );
+  ): Promise<{ items: User[]; total: number }> {
+    const result = await this.usersService.findAllUsers(query);
+
+    result.items = result.items.map((user) => serializeToDto(UserDto, user));
 
     return result;
   }
@@ -26,5 +35,27 @@ export class UsersController {
     const createdUser = await this.usersService.createUser(createUserDto);
 
     return serializeToDto(UserDto, createdUser);
+  }
+
+  @Delete('/:id')
+  async deleteUser(@Param('id') id: number) {
+    const result = await this.usersService.deleteUser(id);
+
+    if (!result.affected) {
+      throw new BadRequestException('user not found');
+    }
+
+    return;
+  }
+
+  @Get('/:id')
+  async getUser(@Param('id') id: number) {
+    const user = await this.usersService.findUser(id);
+
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+
+    return serializeToDto(UserDto, user);
   }
 }
