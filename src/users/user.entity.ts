@@ -1,3 +1,4 @@
+import { UserStatusType } from 'src/users/types/user-status.type';
 import {
   Column,
   CreateDateColumn,
@@ -35,6 +36,6 @@ export class User {
   @Column({ length: 50, nullable: true })
   password: string;
 
-  @Column({ length: 15, nullable: true })
-  status: string;
+  @Column({ nullable: true })
+  status: UserStatusType;
 }
