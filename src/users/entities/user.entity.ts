@@ -1,8 +1,10 @@
+import { Post } from 'src/posts/entities/post.entity';
 import { UserStatusType } from 'src/users/types/user-status.type';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -38,4 +40,7 @@ export class User {
 
   @Column({ nullable: true })
   status: UserStatusType;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
 }

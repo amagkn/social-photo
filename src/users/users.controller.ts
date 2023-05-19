@@ -13,7 +13,7 @@ import { serializeToDto } from 'src/common/helpers/serialize-to-dto.helper';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { FindAllUsersDto } from 'src/users/dtos/find-all-users.dto';
 import { UserDto } from 'src/users/dtos/user.dto';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 
 @Controller('users')

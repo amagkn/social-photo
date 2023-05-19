@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Hashtag } from 'src/hashtags/hashtag.entity';
+import { Hashtag } from 'src/hashtags/entities/hashtag.entity';
 import { Repository } from 'typeorm';
 
 @Controller('hashtags')

@@ -2,16 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
 import { FindAllUsersDto } from 'src/users/dtos/find-all-users.dto';
-import { User } from 'src/users/user.entity';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  usersQueryBuilder: SelectQueryBuilder<User>;
-
-  constructor(@InjectRepository(User) usersRepository: Repository<User>) {
-    this.usersQueryBuilder = usersRepository.createQueryBuilder('users');
-  }
+  constructor(
+    @InjectRepository(User) private usersRepository: Repository<User>,
+  ) {}
   async findAllUsers(params: FindAllUsersDto) {
     const { offset = 0, limit = 50, username, email } = params;
 
@@ -25,7 +23,8 @@ export class UsersService {
       whereCondition = `email = :email`;
     }
 
-    const qb = this.usersQueryBuilder
+    const qb = this.usersRepository
+      .createQueryBuilder('users')
       .where(whereCondition, { username, email })
       .offset(offset)
       .limit(limit);
@@ -36,7 +35,8 @@ export class UsersService {
     return { items, total };
   }
   async createUser(createUserDto: CreateUserDto) {
-    const result = await this.usersQueryBuilder
+    const result = await this.usersRepository
+      .createQueryBuilder('users')
       .insert()
       .values(createUserDto)
       .execute();
@@ -47,7 +47,8 @@ export class UsersService {
   }
 
   async deleteUser(id: number) {
-    const result = await this.usersQueryBuilder
+    const result = await this.usersRepository
+      .createQueryBuilder('users')
       .delete()
       .where('id = :id', { id })
       .execute();
@@ -56,7 +57,8 @@ export class UsersService {
   }
 
   async findUser(id: number) {
-    const user = await this.usersQueryBuilder
+    const user = await this.usersRepository
+      .createQueryBuilder('users')
       .where('id = :id', { id })
       .getOne();
 
