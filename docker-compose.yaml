@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  db_social_photo:
+    image: postgres:15.3-alpine
+    restart: always
+    container_name: db_social_photo
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
