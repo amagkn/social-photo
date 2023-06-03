@@ -4,6 +4,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from 'db/data-source';
 
+import { FakerModule } from './faker/faker.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -11,6 +12,7 @@ import { UsersModule } from './users/users.module';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(dataSourceOptions),
     UsersModule,
+    FakerModule,
   ],
   controllers: [],
   providers: [

@@ -6,8 +6,6 @@ config();
 
 const configService = new ConfigService();
 
-console.log(configService.get('DB_USERNAME'));
-
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: configService.get('DB_HOST'),
