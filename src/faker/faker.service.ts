@@ -11,7 +11,7 @@ export class FakerService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async seedUser(count = 0) {
+  async seedUsers(count = 0) {
     const fakeUsers: CreateUserDto[] = [];
 
     for (let i = 0; i < count; i++) {
@@ -34,5 +34,9 @@ export class FakerService {
     }
 
     return this.userRepository.save(fakeUsers);
+  }
+
+  async clearUsers() {
+    await this.userRepository.clear();
   }
 }
