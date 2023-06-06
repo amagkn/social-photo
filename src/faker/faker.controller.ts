@@ -1,17 +1,24 @@
-import { Controller, Delete, Post, Query } from '@nestjs/common';
+import {
+  Controller,
+  DefaultValuePipe,
+  Delete,
+  Get,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { FakerService } from 'src/faker/faker.service';
 
 @Controller('faker')
 export class FakerController {
-  defaultCount = 5;
-
   constructor(private fakerService: FakerService) {}
 
   @Post('/seed/user')
-  async seedUsers(@Query('count') count: string) {
-    const result = await this.fakerService.seedUsers(
-      isNaN(+count) ? this.defaultCount : +count,
-    );
+  async seedUsers(
+    @Query('count', new DefaultValuePipe(5), ParseIntPipe)
+    count: number,
+  ) {
+    const result = await this.fakerService.seedUsers(count);
 
     return result;
   }
@@ -19,5 +26,10 @@ export class FakerController {
   @Delete('/user')
   async deleteUsers() {
     await this.fakerService.clearUsers();
+  }
+
+  @Get('sandbox')
+  async sandbox() {
+    return 'sandbox';
   }
 }
